@@ -32,6 +32,7 @@ where
 import GHC.TypeLits                 (KnownNat)
 import Prelude                      hiding (head, map, tail)
 
+import Clash.NamedTypes             ((:::))
 import Clash.Signal.Bundle.Internal (deriveBundleTuples)
 import Clash.Signal.Internal        (Signal (..), Domain)
 import Clash.Sized.BitVector        (Bit, BitVector)
@@ -110,7 +111,6 @@ class Bundle a where
                    => Signal dom a -> Unbundled dom a
   unbundle s = s
 
-instance Bundle ()
 instance Bundle Bool
 instance Bundle Integer
 instance Bundle Int
@@ -125,6 +125,16 @@ instance Bundle (Index n)
 instance Bundle (Fixed rep int frac)
 instance Bundle (Signed n)
 instance Bundle (Unsigned n)
+
+-- | Note that:
+--
+-- > bundle   :: () -> Signal dom ()
+-- > unbundle :: Signal dom () -> ()
+instance Bundle () where
+  type Unbundled t () = t ::: ()
+  -- ^ This is just to satisfy the injectivity annotation
+  bundle   u = pure u
+  unbundle _ = ()
 
 deriveBundleTuples ''Bundle ''Unbundled 'bundle 'unbundle
 
