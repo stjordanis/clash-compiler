@@ -294,7 +294,7 @@ generateHDL reprs bindingsMap hdlState primMap tcm tupTcm typeTrans eval
                            (topNm, Left manifest')
       writeHDL (hdlDir </> maybe "" t_name annM) (head hdlDocs)
       mapM_ (writeHDL dir) (tail hdlDocs)
-      copyDataFiles (opt_importPaths opts) dir dfiles
+      copyDataFiles (opt_importPaths opts) (dir </> "..") dfiles
       writeMemoryDataFiles dir mfiles
 
       hdlDocs `seq` Clock.getCurrentTime
