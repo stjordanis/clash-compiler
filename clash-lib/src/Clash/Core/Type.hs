@@ -44,6 +44,7 @@ module Clash.Core.Type
   , isPolyFunTy
   , isPolyFunCoreTy
   , isPolyTy
+  , isUnresolvedTypeFamily
   , isFunTy
   , isClassTy
   , applyFunTy
@@ -535,6 +536,11 @@ reduceTypeFamily tcm (tyView -> TyConApp tc tys)
   = findFunSubst tcm tcSubst tys
 
 reduceTypeFamily _ _ = Nothing
+
+isUnresolvedTypeFamily ::  TyConMap -> Type -> Bool
+isUnresolvedTypeFamily tcm (tyView -> TyConApp tcNm _args)
+  | Just (FunTyCon {}) <- lookupUniqMap tcNm tcm = True
+isUnresolvedTypeFamily _tcm _type = False
 
 litView :: TyConMap -> Type -> Maybe Integer
 litView _ (LitTy (NumTy i))                = Just i
