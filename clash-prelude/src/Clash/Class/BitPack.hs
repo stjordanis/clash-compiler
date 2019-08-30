@@ -135,9 +135,7 @@ packXWith
   => (a -> BitVector n)
   -> a
   -> BitVector n
-packXWith f x =
-  unsafeDupablePerformIO (catch (f <$> evaluate x)
-                                (\(XException _) -> return undefined#))
+packXWith f x = unsafeDupablePerformIO (f <$> evaluate x)
 {-# NOINLINE packXWith #-}
 
 {-# INLINE bitCoerce #-}
