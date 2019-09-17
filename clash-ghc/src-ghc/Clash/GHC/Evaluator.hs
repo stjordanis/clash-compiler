@@ -1380,6 +1380,12 @@ reduceConstant isSubj tcm h k nm pInfo tys args = case nm of
   "Clash.Sized.Internal.BitVector.low"
     -> reduce (mkBitLit ty 0 0)
 
+  "Clash.Sized.Internal.BitVector.undefined#"
+    | Just (_, kn) <- extractKnownNat tcm tys
+    -> let resTyInfo = extractTySizeInfo tcm ty tys
+           mask = bit (fromInteger kn) - 1
+       in reduce (mkBitVectorLit' resTyInfo mask 0)
+
 -- Eq
   "Clash.Sized.Internal.BitVector.eq##" | [(0,i),(0,j)] <- bitLiterals args
     -> reduce (boolToBoolLiteral tcm ty (i == j))
