@@ -113,6 +113,7 @@ runClashTest =
         , runTest ("tests" </> "shouldwork" </> "BitVector") defBuild [] "ExtendingNumZero" (["","testBench"],"testBench",True)
         , runTest ("tests" </> "shouldwork" </> "BitVector") defBuild ["-fconstraint-solver-iterations=15"] "GenericBitPack"   (["","testBench"],"testBench",True)
         , runTest ("tests" </> "shouldwork" </> "BitVector") defBuild [] "AppendZero"       (["","testBench"],"testBench",True)
+        , runTest ("tests" </> "shouldwork" </> "BitVector") defBuild [] "UnpackUndefined"  ([""],"topEntity",False)
         ]
       , clashTestGroup "BlackBox"
         [ outputTest ("tests" </> "shouldwork" </> "BlackBox") [VHDL]   [] [] "TemplateFunction"   "main"
@@ -224,6 +225,8 @@ runClashTest =
         , runTest ("tests" </> "shouldwork" </> "Numbers") defBuild [] "SignedZero"   (["","testBench"],"testBench",True)
         , runTest ("tests" </> "shouldwork" </> "Numbers") defBuild [] "Signum"   (["","testBench"],"testBench",True)
         , runTest ("tests" </> "shouldwork" </> "Numbers") defBuild [] "Strict"       (["","testBench"],"testBench",True)
+        , runTest ("tests" </> "shouldwork" </> "Numbers") defBuild ["-itests/shouldwork/Numbers"] "UndefinedConstantFoldingTB"        (["","testBench"],"testBench",True)
+        , outputTest ("tests" </> "shouldwork" </> "Numbers") defBuild [] ["-itests/shouldwork/Numbers"] "UndefinedConstantFolding"  "main"
         , runTest ("tests" </> "shouldwork" </> "Numbers") defBuild [] "UnsignedZero" (["","testBench"],"testBench",True)
         ]
       , clashTestGroup "Polymorphism"
