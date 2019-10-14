@@ -200,6 +200,7 @@ Library
                       Clash.Normalize.Types
                       Clash.Normalize.Util
 
+                      Clash.Primitives.Scaffold
                       Clash.Primitives.Types
                       Clash.Primitives.Util
 
@@ -257,3 +258,4 @@ test-suite unittests
       tasty-hunit
 
   Other-Modules: Clash.Tests.Core.FreeVars
+                 Clash.Tests.Scaffold
