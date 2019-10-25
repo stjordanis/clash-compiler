@@ -1404,7 +1404,11 @@ inst_ (InstDecl entOrComp libM nm lbl gens pms) = do
 inst_ (BlackBoxD _ libs imps inc bs bbCtx) =
   fmap Just (Mon (column (renderBlackBox libs imps inc bs bbCtx)))
 
-inst_ _ = return Nothing
+inst_ (CommentDecl (TextS.splitOn "\n" -> commentLines)) =
+  fmap Just $ vsep $ sequence $ ["--" <+> pretty l | l <- commentLines]
+
+inst_ (NetDecl' {}) = return Nothing
+inst_ (TickDecl {}) = return Nothing
 
 -- | Render a data constructor application for data constructors having a
 -- custom bit representation.
