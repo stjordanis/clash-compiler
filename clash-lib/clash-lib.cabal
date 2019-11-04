@@ -205,6 +205,7 @@ Library
                       Clash.Primitives.GHC.Word
                       Clash.Primitives.Intel.ClockGen
                       Clash.Primitives.Sized.Vector
+                      Clash.Primitives.Verification
 
                       Clash.Rewrite.Combinators
                       Clash.Rewrite.Types
@@ -213,6 +214,8 @@ Library
                       Clash.Unique
                       Clash.Util
                       Clash.Util.Graph
+                      Clash.Util.TermLiteral
+                      Clash.Util.TermLiteral.TH
                       Clash.Pretty
 
                       Data.Text.Prettyprint.Doc.Extra

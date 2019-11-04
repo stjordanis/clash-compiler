@@ -353,6 +353,9 @@ runClashTest = defaultMain $ clashTestRoot
         , runTest "ZipWithUnitSP" def
         , runTest "ZipWithUnitSP2" def
         ]
+      , clashTestGroup "Verification"
+        [ runTest "Example1" def
+        ]
       , clashTestGroup "Vector"
         [ runTest "Concat" def
         , runTest "DFold" def
