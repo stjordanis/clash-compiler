@@ -25,51 +25,51 @@ import           Clash.Verification.Types
 -- collisions.
 name :: Text -> Signal dom Bool -> CvExpression dom
 name nm signal = CvPure (Just nm, signal)
---{-# INLINE name #-}
+{-# INLINE name #-}
 
 lit :: Bool -> CvExpression dom
 lit = CvLit
---{-# INLINE lit #-}
+{-# INLINE lit #-}
 
 and :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 and a b = CvAnd (toCvExpr a) (toCvExpr b)
---{-# INLINE and #-}
+{-# INLINE and #-}
 
 or :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 or a b = CvOr (toCvExpr a) (toCvExpr b)
---{-# INLINE or #-}
+{-# INLINE or #-}
 
 implies :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 implies a b = CvImplies (toCvExpr a) (toCvExpr b)
---{-# INLINE implies #-}
+{-# INLINE implies #-}
 
 next :: CvValue dom a => a -> CvExpression dom
 next = CvNext 1 . toCvExpr
---{-# INLINE next #-}
+{-# INLINE next #-}
 
 nextN :: CvValue dom a => Int -> a -> CvExpression dom
 nextN n = CvNext n . toCvExpr
---{-# INLINE nextN #-}
+{-# INLINE nextN #-}
 
 after :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 after a b = CvAfter (toCvExpr a) (toCvExpr b)
---{-# INLINE after #-}
+{-# INLINE after #-}
 
 timplies :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 timplies a b = CvTemporalImplies 1 (toCvExpr a) (toCvExpr b)
---{-# INLINE timplies #-}
+{-# INLINE timplies #-}
 
 timpliesOverlapping :: (CvValue dom a, CvValue dom b) => a -> b -> CvExpression dom
 timpliesOverlapping a b = CvTemporalImplies 0 (toCvExpr a) (toCvExpr b)
---{-# INLINE timpliesOverlapping #-}
+{-# INLINE timpliesOverlapping #-}
 
 always :: CvValue dom a => a -> CvProperty dom
 always = CvAlways . toCvExpr
---{-# INLINE always #-}
+{-# INLINE always #-}
 
 never :: CvValue dom a => a -> CvProperty dom
 never = CvNever . toCvExpr
---{-# INLINE never #-}
+{-# INLINE never #-}
 
 assert
   :: KnownDomain dom
