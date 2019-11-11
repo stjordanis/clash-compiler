@@ -38,12 +38,13 @@ module Clash.XException
     -- * Printing 'X' exceptions as \"X\"
   , ShowX (..), showsX, printX, showsPrecXWith
     -- * Strict evaluation
-  , seqX, forceX, deepseqX, rwhnfX, defaultSeqX
+  , seqX, forceX, deepseqX, rwhnfX, defaultSeqX, hwSeqX
     -- * Structured undefined / deep evaluation with undefined values
   , NFDataX (rnfX, deepErrorX, hasUndefined, ensureSpine)
   )
 where
 
+import Clash.Annotations.Primitive (hasBlackBox)
 import Control.Exception (Exception, catch, evaluate, throw)
 import Control.DeepSeq   (NFData, rnf)
 import Data.Complex      (Complex)
@@ -110,6 +111,13 @@ seqX a b = unsafeDupablePerformIO
   (catch (evaluate a >> return b) (\(XException _) -> return b))
 {-# NOINLINE seqX #-}
 infixr 0 `seqX`
+
+-- | Like 'seqX' in simulation, but will force its first argument to be rendered
+-- in HDL.
+hwSeqX :: a -> b -> b
+hwSeqX = seqX
+{-# NOINLINE hwSeqX #-}
+{-# ANN hwSeqX hasBlackBox #-}
 
 -- | Evaluate a value with given function, returning 'Nothing' if it throws
 -- 'XException'.
