@@ -786,7 +786,7 @@ mkProjection mkDec bndr scrut altTy alt@(pat,v) = do
 
 -- | Given a list of (potentially) zero-width terms, render them if there is
 -- a blackbox insisting they be rendered.
-renderVoids :: [(Maybe HWType, Term)] -> NetlistMonad [Declaration]
+renderVoids :: HasCallStack => [(Maybe HWType, Term)] -> NetlistMonad [Declaration]
 renderVoids terms = do
   tcm <- Lens.use tcCache
   concatMapM

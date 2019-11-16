@@ -84,12 +84,10 @@ data CvResult = CvResult
 {-# ANN module (
   DataReprAnn
     $(liftQ [t| CvResult |])
-    1
-    [ ConstrRepr 'CvResult 0 0 [0b0, 0b1]
+    0
+    [ ConstrRepr 'CvResult 0 0 [0b0, 0b0]
     ]) #-}
-{- ^ Mark 'cvResultName' as zero-width so Clash won't stumble on the fact
-     it's unrepresentable. We can't mark the whole type as zero bits, because
-     Clash will then omit rendering PSL/SVA.. -}
+{- ^ Mark as zero-width so Clash won't stumble on the fact it's unrepresentable. -}
 
 class CvValue dom a where
   toCvExpr :: a -> CvExpression dom

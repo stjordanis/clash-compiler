@@ -4,7 +4,7 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE ViewPatterns          #-}
 
-module Clash.Primitives.Verification (assertBBF) where
+module Clash.Primitives.Verification (assertBBF, hideCvResultTF) where
 
 import Data.Either
 
@@ -17,7 +17,8 @@ import           Data.Semigroup.Monad            (getMon)
 import           GHC.Stack                       (HasCallStack)
 
 import qualified Clash.Backend
-import           Clash.Backend                   (Backend, blockDecl, hdlKind)
+import           Clash.Backend
+  (Backend, blockDecl, hdlKind, expr)
 import           Clash.Core.Term                 (Term(Var))
 import           Clash.Core.Util                 (termType)
 import           Clash.Util                      (indexNote)
@@ -31,10 +32,9 @@ import           Clash.Netlist.Id                (IdType(Basic))
 import           Clash.Netlist.Types
   (BlackBox(BBFunction), TemplateFunction(..), BlackBoxContext, Identifier,
    NetlistMonad, Declaration(Assignment, NetDecl', CommentDecl),
-   HWType(Bool, KnownDomain), WireOrReg(Wire), Expr(Identifier, Literal),
-   Literal(BitVecLit), tcCache, bbInputs, bbResult)
+   HWType(Bool, KnownDomain), WireOrReg(Wire), tcCache, bbInputs)
 import           Clash.Netlist.BlackBox.Types
-  (BlackBoxFunction, BlackBoxMeta(..), TemplateKind(TDecl),
+  (BlackBoxFunction, BlackBoxMeta(..), TemplateKind(TDecl), RenderVoid(..),
    emptyBlackBoxMeta)
 
 import           Clash.Verification.Types
@@ -56,7 +56,7 @@ assertBBF _isD _primName args _ty =
   cvProperty = CvAssert <$> termToDataError (indexNote "propArg" (lefts args) 4)
 
   bb = BBFunction "Clash.Primitives.Verification.assertTF" 0
-  meta = emptyBlackBoxMeta {bbKind=TDecl}
+  meta = emptyBlackBoxMeta {bbKind=TDecl, bbRenderVoid=RenderVoid}
   mkId = Clash.Netlist.Util.mkUniqueIdentifier Basic . Text.pack
 
   bindMaybe
@@ -71,10 +71,10 @@ assertBBF _isD _primName args _ty =
   bindMaybe (Just nm) t = do
     tcm <- Lens.use tcCache
     newId <- mkId nm
-    (expr, decls) <- mkExpr False (Left newId) (termType tcm t) t
+    (expr0, decls) <- mkExpr False (Left newId) (termType tcm t) t
     pure
       ( newId
-      , decls ++ [sigDecl Bool newId, Assignment newId expr] )
+      , decls ++ [sigDecl Bool newId, Assignment newId expr0] )
 
   -- Simple wire without comment
   sigDecl :: HWType -> Identifier -> Declaration
@@ -104,11 +104,8 @@ assertTF'
   -> BlackBoxContext
   -> State s Doc
 assertTF' decls clkId propName renderAs prop bbCtx = do
-  blockName <- mkId (propName <> "_block")
-  getMon $ blockDecl blockName $ (++) decls $
-    [ CommentDecl renderedPslProperty
-    , Assignment resultId (Literal (Just (resultType, 1)) (BitVecLit 0 1))
-    ]
+  blockName <- Clash.Backend.mkUniqueIdentifier Basic (propName <> "_block")
+  getMon (blockDecl blockName (CommentDecl renderedPslProperty : decls))
 
  where
   hdl = hdlKind (undefined :: s)
@@ -124,11 +121,10 @@ assertTF' decls clkId propName renderAs prop bbCtx = do
       SVA ->
         error "SVA NYI"
 
-  (resultId, resultType) =
-    case bbResult bbCtx of
-      (Identifier t _, rt) -> (t, rt)
-      _ -> error "Unexpected result identifier"
+hideCvResultTF :: TemplateFunction
+hideCvResultTF = TemplateFunction [0, 1] (const True) hideCvResultTF'
 
-
-  mkId :: Text.Text -> State s Identifier
-  mkId = Clash.Backend.mkUniqueIdentifier Basic
+hideCvResultTF' :: forall s . Backend s => BlackBoxContext -> State s Doc
+hideCvResultTF' bbCtx = getMon (expr False bExpr)
+ where
+  [_, (bExpr, _bType, _bIsLit)] = bbInputs bbCtx

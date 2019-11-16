@@ -354,7 +354,8 @@ runClashTest = defaultMain $ clashTestRoot
         , runTest "ZipWithUnitSP2" def
         ]
       , clashTestGroup "Verification"
-        [ runTest "Example1" def
+        [ runTest "Example1" def{hdlTargets=[VHDL]}
+        , runTest "Example1" def{hdlTargets=[Verilog, SystemVerilog], hdlSim=False}
         ]
       , clashTestGroup "Vector"
         [ runTest "Concat" def

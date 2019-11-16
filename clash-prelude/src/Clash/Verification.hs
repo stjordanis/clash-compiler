@@ -16,7 +16,7 @@ import           Data.Text                         (Text)
 
 import           Clash.Annotations.Primitive       (Primitive(InlinePrimitive), HDL(..))
 import           Clash.Signal.Internal             (KnownDomain, Signal, Clock)
-import           Clash.XException                  (errorX)
+import           Clash.XException                  (errorX, hwSeqX)
 
 import           Clash.Verification.Types
 
@@ -88,8 +88,7 @@ assert !_clk !_propName !_renderAs !_prop =
 {-# ANN assert (InlinePrimitive SystemVerilog "[ { \"BlackBoxHaskell\" : { \"name\" : \"Clash.Verification.assert\", \"templateFunction\" : \"Clash.Primitives.Verification.assertBBF\"}} ]") #-}
 
 hideCvResult :: Signal dom CvResult -> a -> a
-hideCvResult !_ a = a
-{-# NOINLINE hideCvResult #-}
+hideCvResult = hwSeqX
 
 mergeCvResults :: Signal dom CvResult -> Signal dom CvResult -> Signal dom CvResult
 mergeCvResults !_a !_b =
