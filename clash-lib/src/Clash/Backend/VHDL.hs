@@ -1386,9 +1386,11 @@ inst_ (CondAssignment id_ _sig scrut scrutTy es) = fmap Just $
 
 inst_ (InstDecl entOrComp libM nm lbl gens pms) = do
     maybe (return ()) (\lib -> Mon (libraries %= (T.fromStrict lib:))) libM
-    fmap Just $
+    rendered <-
       nest 2 $ pretty lbl <+> colon <> entOrComp'
                 <+> maybe emptyDoc ((<> ".") . pretty) libM <> pretty nm <> line <> gms <> pms' <> semi
+
+    Just <$> ("-- InstDecl" <+> pretty (show entOrComp) <+> pretty nm <> ":" <> line <> pure rendered)
   where
     gms | [] <- gens = emptyDoc
         | otherwise =  do
@@ -1401,8 +1403,9 @@ inst_ (InstDecl entOrComp libM nm lbl gens pms) = do
     formalLength _                = 0
     entOrComp' = case entOrComp of { Entity -> " entity"; Comp -> " component"; Empty -> ""}
 
-inst_ (BlackBoxD _ libs imps inc bs bbCtx) =
-  fmap Just (Mon (column (renderBlackBox libs imps inc bs bbCtx)))
+inst_ (BlackBoxD nm libs imps inc bs bbCtx) = do
+  rendered <- Mon (column (renderBlackBox libs imps inc bs bbCtx))
+  Just <$> ("-- BlackBoxD: " <> pretty nm <> line <> pure rendered)
 
 inst_ _ = return Nothing
 
