@@ -1,58 +1,110 @@
+image: clashlang/clash-ci:2019-12-03
+
 stages:
   - build
-  # TODO: add test stage to prevent cache throwouts if test failed?
+  - test # TODO: prevent cache throwouts if test failed
   - publish
 
-.tests:
-  image: leonschoorl/clash-ci-image:trusty
+.build-common:
   stage: build
   interruptible: true
+
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     TERM: xterm-color
+
   retry:
     max: 2
     when:
       - runner_system_failure
       - stuck_or_timeout_failure
+
   cache:
     key: cabal-store-$CI_JOB_NAME
     paths:
-      - cabal-store/
+      - $HOME/.cabal/config
+      - $HOME/.cabal/store
+      - $HOME/.cabal/packages/hackage.haskell.org/01-index.*
+      - $HOME/.cabal/packages/hackage.haskell.org/snapshot.json
+      - $HOME/.cabal/packages/hackage.haskell.org/timestamp.json
+
+.build-init: &build-init
+  - unset SNAPCRAFT_LOGIN_FILE
+  - unset HACKAGE_PASSWORD
+  - export THREADS=$(nproc)
+
+.build-fini: &build-fini
+  - export
+  - .ci/build.sh
+
+build-8.4.4:
+  extends: .build-common
+  
   script:
-    - unset SNAPCRAFT_LOGIN_FILE
-    - unset HACKAGE_PASSWORD
-    - export GHC="${GHC:-$CI_JOB_NAME}"
-    - export THREADS=$(nproc)
-    - export CABAL_JOBS=$(nproc)
-    - export
-    - .ci/setup.sh
-    - .ci/build.sh
+    - *build-init
+    - export CABAL_VERSION=2.4
+    - export GHC_VERSION=8.4.4
+    - export CLASH_MULTIPLE_HIDDEN=+multiple-hidden
+    - *build-fini
+
+build-8.6.5:
+  extends: .build-common
+
+  script:
+    - *build-init
+    - export CABAL_VERSION=2.4
+    - export GHC_VERSION=8.6.5
+    - export CLASH_MULTIPLE_HIDDEN=-multiple-hidden
+    - *build-fini
+
+build-8.8.1:
+  extends: .build-common
+
+  script:
+    - *build-init
+    - export CABAL_VERSION=3.0
+    - export GHC_VERSION=8.8.1
+    - export CLASH_MULTIPLE_HIDDEN=+multiple-hidden
+    - *build-fini
+
+build-8.10.1:
+  extends: .build-common
+
+  script:
+    - *build-init
+    - export CABAL_VERSION=head
+    - export GHC_VERSION=8.10.1
+    - export CLASH_MULTIPLE_HIDDEN=+multiple-hidden
+    - *build-fini
+
+.test-common:
+  stage: test
+
+  script:
     - .ci/test.sh
 
-ghc-8.4.4:
-  extends: .tests
-#ghc-8.6.5:
-#  extends: .tests
-ghc-8.8.1:
-  extends: .tests
-ghc-8.6.5-singular-hidden:
-  extends: .tests
-  variables:
-    MULTIPLE_HIDDEN: "no"
-    GHC: ghc-8.6.5
-#ghc-head:
-#  # extends: .tests
-#  stage: build
-#  allow_failure: true
-#  script:
-#    TODO test with HEAD
+test-8.4.4:
+  extends: .test-common
+  needs: ['build-8.4.4']
+
+test-8.6.5:
+  extends: .test-common
+  needs: ['build-8.6.5']
+
+test-8.8.1:
+  extends: .test-common
+  needs: ['build-8.8.1']
+
+test-8.10.1:
+  extends: .test-common
+  needs: ['build-8.10.1']
+
+# TODO
 
 hackage-sdist:
-  extends: .tests
+  extends: build-8.8.1
   interruptible: false
-  variables:
-    GHC: ghc-8.8.1
+
   script:
     - export GHC="${GHC:-$CI_JOB_NAME}"
     - export THREADS=$(nproc)
@@ -61,6 +113,7 @@ hackage-sdist:
     - .ci/build_sdist.sh clash-prelude
     - .ci/build_sdist.sh clash-lib
     - .ci/build_sdist.sh clash-ghc
+
   artifacts:
     paths:
       - clash-*.tar.gz  # clash-{prelude,lib,ghc}-$version{-docs,}.tar.gz
@@ -71,7 +124,7 @@ hackage-sdist:
     - triggers
 
 .hackage:
-  extends: .tests
+  extends: test-8.8.1
   interruptible: false
   stage: publish
   cache:

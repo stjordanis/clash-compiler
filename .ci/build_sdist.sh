@@ -1,5 +1,6 @@
-#!/bin/bash
-set -x -euf -o pipefail
+#!/usr/bin/env bash
+
+set -xeufo pipefail
 
 cd $(dirname $0)/..
 
@@ -7,10 +8,10 @@ cd $(dirname $0)/..
 sed -i 's/documentation: False/documentation: True/g' cabal.project.local
 
 # Build source distribution
-cabal sdist $1 |& tee sdist.log
+$CABAL v2-sdist "$1" |& tee sdist.log
 
 # Build documentation
-cabal new-haddock $1 \
+$CABAL v2-haddock $1 \
     --haddock-for-hackage \
     --haddock-hyperlinked-source \
     --enable-documentation |& tee haddock.log
@@ -25,3 +26,4 @@ DDIST=$(grep "Documentation tarball created:" -A 1 haddock.log | tail -n 1)
 cd -
 cp $SDIST $(basename $SDIST)  # Example: clash-prelude-0.9999.tar.gz
 cp $DDIST $(basename $DDIST)  # Example: clash-prelude-0.9999-docs.tar.gz
+
