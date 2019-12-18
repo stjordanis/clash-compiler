@@ -132,6 +132,30 @@ Library
 
   Autogen-Modules:    Paths_clash_prelude
 
+  default-extensions: BangPatterns
+                      BinaryLiterals
+                      DataKinds
+                      DefaultSignatures
+                      DeriveDataTypeable
+                      DeriveFoldable
+                      DeriveFunctor
+                      DeriveGeneric
+                      DeriveLift
+                      DeriveTraversable
+                      DerivingStrategies
+                      InstanceSigs
+                      KindSignatures
+                      MagicHash
+                      ScopedTypeVariables
+                      StandaloneDeriving
+                      TupleSections
+                      TypeApplications
+                      TypeOperators
+                      ViewPatterns
+
+  if impl(ghc >= 8.6)
+      default-extensions: NoStarIsType
+
   Exposed-modules:    Clash.Annotations.TopEntity
                       Clash.Annotations.Primitive
                       Clash.Annotations.BitRepresentation
@@ -244,32 +268,17 @@ Library
                       Paths_clash_prelude
 
   other-extensions:   CPP
-                      BangPatterns
                       ConstraintKinds
-                      DataKinds
-                      DefaultSignatures
-                      DeriveDataTypeable
-                      DeriveTraversable
-                      DeriveLift
                       FlexibleContexts
                       FlexibleInstances
                       GADTs
                       GeneralizedNewtypeDeriving
-                      InstanceSigs
-                      KindSignatures
-                      MagicHash
                       MultiParamTypeClasses
                       PatternSynonyms
-                      Rank2Types
-                      ScopedTypeVariables
-                      StandaloneDeriving
+                      RankNTypes
                       TemplateHaskell
-                      TupleSections
-                      TypeApplications
                       TypeFamilies
-                      TypeOperators
                       UndecidableInstances
-                      ViewPatterns
 
   Build-depends:      array                     >= 0.5.1.0 && < 0.6,
                       base                      >= 4.10    && < 5,
@@ -343,6 +352,30 @@ test-suite unittests
       tasty-hunit,
       tasty-quickcheck,
       template-haskell
+
+  default-extensions: BangPatterns
+                      BinaryLiterals
+                      DataKinds
+                      DefaultSignatures
+                      DeriveDataTypeable
+                      DeriveFoldable
+                      DeriveFunctor
+                      DeriveGeneric
+                      DeriveLift
+                      DeriveTraversable
+                      DerivingStrategies
+                      InstanceSigs
+                      KindSignatures
+                      MagicHash
+                      ScopedTypeVariables
+                      StandaloneDeriving
+                      TupleSections
+                      TypeApplications
+                      TypeOperators
+                      ViewPatterns
+
+  if impl(ghc >= 8.6)
+      default-extensions: NoStarIsType
 
   Other-Modules:
                  Clash.Tests.AutoReg

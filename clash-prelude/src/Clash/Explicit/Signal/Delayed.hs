@@ -7,13 +7,9 @@ Maintainer :  Christiaan Baaij <christiaan.baaij@gmail.com>
 -}
 
 {-# LANGUAGE CPP                        #-}
-{-# LANGUAGE DataKinds                  #-}
 {-# LANGUAGE GADTs                      #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TypeFamilies               #-}
-{-# LANGUAGE TypeOperators              #-}
-
 {-# LANGUAGE Trustworthy #-}
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
