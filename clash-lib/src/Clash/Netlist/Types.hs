@@ -8,13 +8,13 @@
   Type and instance definitions for Netlist modules
 -}
 
-{-# LANGUAGE CPP                        #-}
-{-# LANGUAGE DeriveAnyClass             #-}
-{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE PatternSynonyms            #-}
-{-# LANGUAGE RankNTypes                 #-}
-{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TemplateHaskell #-}
 -- since GHC 8.6 we can haddock individual contructor fields \o/
 #if __GLASGOW_HASKELL__ >= 806
 #define FIELD ^

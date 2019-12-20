@@ -6,10 +6,10 @@
   Smart constructor and destructor functions for CoreHW
 -}
 
-{-# LANGUAGE CPP               #-}
-{-# LANGUAGE NamedFieldPuns    #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Clash.Core.Util where
 
