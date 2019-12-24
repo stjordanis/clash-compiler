@@ -295,9 +295,13 @@ scaffoldAnnotation n ntf hdl =
           }]
       |]
 
-
+pureDefault :: Exp
 pureDefault = VarE 'pure `AppE` VarE 'def
+
+knownDomains :: [Name] -> [Type]
 knownDomains = fmap (AppT (ConT ''C.KnownDomain) . VarT)
+
+applyDomains :: [Name] -> Type -> Type
 applyDomains = flip (foldl AppT) . fmap VarT
 
 -- | Builds the Haskell datatypes "datatypeNameI" and "datatypeNameO",
