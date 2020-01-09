@@ -542,7 +542,8 @@ veryUnsafeSynchronizer t1 t2
 
 -- | Merge enable signal with signal of bools
 enable
-  :: Enable dom
+  :: KnownDomain dom
+  => Enable dom
   -> Signal dom Bool
   -> Enable dom
 enable e0 e1 =
@@ -570,8 +571,7 @@ dflipflop clk i =
 -- >>> sampleN 3 (delay systemClockGen enableGen 0 (fromList [1,2,3,4]))
 -- [0,1,2]
 delay
-  :: ( KnownDomain dom
-     , NFDataX a )
+  :: ( NFDataX a )
   => Clock dom
   -- ^ Clock
   -> Enable dom

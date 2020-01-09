@@ -34,4 +34,22 @@
     , "primType"  : "Function"
     }
   }
+, { "Primitive" :
+    { "name"      : "Clash.Signal.Internal.clockDomain"
+    , "workInfo"  : "Never"
+    , "primType"  : "Function"
+    }
+  }
+, { "Primitive" :
+    { "name"      : "Clash.Signal.Internal.enableDomain"
+    , "workInfo"  : "Never"
+    , "primType"  : "Function"
+    }
+  }
+, { "Primitive" :
+    { "name"      : "Clash.Signal.Internal.resetDomain"
+    , "workInfo"  : "Never"
+    , "primType"  : "Function"
+    }
+  }
 ]

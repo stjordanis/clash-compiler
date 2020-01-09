@@ -3,13 +3,15 @@
     , "kind" : "Declaration"
     , "type" :
 "assert
-  :: (KnownDomain dom, Eq a, ShowX a)      -- (ARG[0],ARG[1],ARG[2])
-  => Clock dom                             -- ARG[3]
-  -> Reset dom                             -- ARG[4]
-  -> String                                -- ARG[5]
-  -> Signal dom a                          -- Checked value  (ARG[6])
-  -> Signal dom a                          -- Expected value (ARG[7])
-  -> Signal dom b                          -- Return valued  (ARG[8])
+  :: ( Eq a                                -- ARG[0]
+     , ShowX a                             -- ARG[1]
+     )
+  => Clock dom                             -- ARG[2]
+  -> Reset dom                             -- ARG[3]
+  -> String                                -- ARG[4]
+  -> Signal dom a                          -- Checked value  (ARG[5])
+  -> Signal dom a                          -- Expected value (ARG[6])
+  -> Signal dom b                          -- Return valued  (ARG[7])
   -> Signal dom b"
     , "imports": ["~INCLUDENAME[0].all"]
     , "includes" :
@@ -45,21 +47,21 @@ end;"
 "-- assert begin
 ~GENSYM[assert][0] : block
   -- pragma translate_off
-  signal ~GENSYM[actual][2] : ~TYP[6];
-  signal ~GENSYM[expected][3] : ~TYP[7];
+  signal ~GENSYM[actual][2] : ~TYP[5];
+  signal ~GENSYM[expected][3] : ~TYP[6];
   -- pragma translate_on
 begin
   -- pragma translate_off
+  ~SYM[1] <= ~ARG[5];
   ~SYM[2] <= ~ARG[6];
-  ~SYM[3] <= ~ARG[7];
-  process(~ARG[3]) is
+  process(~ARG[2]) is
   begin
-    if (~IF~ACTIVEEDGE[Rising][0]~THENrising_edge~ELSEfalling_edge~FI(~ARG[3])) then
-      assert (toSLV(~SYM[2]) = toSLV(~SYM[3])) report (~LIT[5] & \", expected: \" & ~INCLUDENAME[0].slv2string(toSLV(~SYM[3])) & \", actual: \" & ~INCLUDENAME[0].slv2string(toSLV(~SYM[2]))) severity error;
+    if (~IF~ACTIVEEDGE[Rising][0]~THENrising_edge~ELSEfalling_edge~FI(~ARG[2])) then
+      assert (toSLV(~SYM[1]) = toSLV(~SYM[2])) report (~LIT[4] & \", expected: \" & ~INCLUDENAME[0].slv2string(toSLV(~SYM[2])) & \", actual: \" & ~INCLUDENAME[0].slv2string(toSLV(~SYM[1]))) severity error;
     end if;
   end process;
   -- pragma translate_on
-  ~RESULT <= ~ARG[8];
+  ~RESULT <= ~ARG[7];
 end block;
 -- assert end"
     }

@@ -717,8 +717,7 @@ fromJustX (Just x) = x
 -- Block RAM.
 -- * Use the adapter 'readNew' for obtaining write-before-read semantics like this: @'readNew' clk rst ('blockRam' clk inits) rd wrM@.
 blockRam
-  :: ( KnownDomain dom
-     , HasCallStack
+  :: ( HasCallStack
      , NFDataX a
      , Enum addr )
   => Clock dom
@@ -763,8 +762,7 @@ blockRam = \clk gen content rd wrM ->
 -- Block RAM.
 -- * Use the adapter 'readNew' for obtaining write-before-read semantics like this: @'readNew' clk rst ('blockRamPow2' clk inits) rd wrM@.
 blockRamPow2
-  :: ( KnownDomain dom
-     , HasCallStack
+  :: ( HasCallStack
      , NFDataX a
      , KnownNat n )
   => Clock dom
@@ -853,8 +851,7 @@ blockRamU clk rst0 en rstStrategy n@SNat initF rd0 mw0 =
 -- | blockRAM1 primitive
 blockRamU#
   :: forall n dom a
-   . ( KnownDomain dom
-     , HasCallStack
+   . ( HasCallStack
      , NFDataX a )
   => Clock dom
   -- ^ 'Clock' to synchronize to
@@ -944,8 +941,7 @@ blockRam1 clk rst0 en rstStrategy n@SNat a rd0 mw0 =
 -- | blockRAM1 primitive
 blockRam1#
   :: forall n dom a
-   . ( KnownDomain dom
-     , HasCallStack
+   . ( HasCallStack
      , NFDataX a )
   => Clock dom
   -- ^ 'Clock' to synchronize to
@@ -973,8 +969,7 @@ blockRam1# clk en n a =
 
 -- | blockRAM primitive
 blockRam#
-  :: ( KnownDomain dom
-     , HasCallStack
+  :: ( HasCallStack
      , NFDataX a )
   => Clock dom
   -- ^ 'Clock' to synchronize to
@@ -995,7 +990,7 @@ blockRam#
   -- ^ Value to write (at address @w@)
   -> Signal dom a
   -- ^ Value of the @blockRAM@ at address @r@ from the previous clock cycle
-blockRam# (Clock _) gen content rd wen =
+blockRam# (Clock _ _) gen content rd wen =
   go
     (V.fromList (toList content))
     (withFrozenCallStack (deepErrorX "blockRam: intial value undefined"))

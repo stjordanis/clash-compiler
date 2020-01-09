@@ -54,7 +54,7 @@ import Clash.Explicit.Signal
   unbundle, unsafeSynchronizer, veryUnsafeSynchronizer)
 import Clash.Signal.Internal (Clock (..), Reset (..))
 import Clash.Signal
-  (mux, DomainResetKind, ResetKind(Asynchronous), KnownDomain,
+  (mux, DomainResetKind, ResetKind(Asynchronous), KnownDomain(..),
   Enable)
 import Clash.Sized.Index     (Index)
 import Clash.Sized.Internal.BitVector
@@ -81,7 +81,7 @@ import Clash.XException      (ShowX (..), XException)
 --
 -- __NB__: This function /can/ be used in synthesizable designs.
 assert
-  :: (KnownDomain dom, Eq a, ShowX a)
+  :: (Eq a, ShowX a)
   => Clock dom
   -> Reset dom
   -> String
@@ -93,7 +93,7 @@ assert
   -> Signal dom b
   -- ^ Return value
   -> Signal dom b
-assert clk (Reset _) msg checked expected returned =
+assert clk (Reset _ _) msg checked expected returned =
   (\c e cnt r ->
       if eqX c e
          then r
@@ -115,7 +115,7 @@ assert clk (Reset _) msg checked expected returned =
 
 -- | The same as 'assert', but can handle don't care bits in it's expected value.
 assertBitVector
-  :: (KnownDomain dom, KnownNat n)
+  :: (KnownNat n)
   => Clock dom
   -> Reset dom
   -> String
@@ -127,7 +127,7 @@ assertBitVector
   -> Signal dom b
   -- ^ Return value
   -> Signal dom b
-assertBitVector clk (Reset _) msg checked expected returned =
+assertBitVector clk (Reset _ _) msg checked expected returned =
   (\c e cnt r ->
       if eqX c e
          then r
@@ -449,14 +449,14 @@ tbClockGen
   :: KnownDomain testDom
   => Signal testDom Bool
   -> Clock testDom
-tbClockGen done = Clock (done `seq` SSymbol)
+tbClockGen done = Clock (done `seq` SSymbol) knownDomain
 {-# NOINLINE tbClockGen #-}
 {-# ANN tbClockGen hasBlackBox #-}
 
 -- | Enable signal that's always enabled. Because it has a blackbox definition
 -- this enable signal is opaque to other blackboxes. It will therefore never
 -- be optimized away.
-tbEnableGen :: Enable tag
+tbEnableGen :: (KnownDomain tag) => Enable tag
 tbEnableGen = toEnable (pure True)
 {-# NOINLINE tbEnableGen #-}
 {-# ANN tbEnableGen hasBlackBox #-}
