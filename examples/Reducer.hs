@@ -76,6 +76,7 @@ discriminator (Discr {..}) index = ( Discr { prevIndex = index
     newDiscr              = index /= prevIndex
     curDiscr' | newDiscr  = curDiscr + 1
               | otherwise = curDiscr
+{-# NOINLINE discriminator #-}
 
 -- =====================================================
 -- = Input Buffer: Buffers incoming inputs when needed =
@@ -99,6 +100,7 @@ inputBuffer buf (discr, dataInt, shift) = (buf', (cell1, cell2))
     selects :: Cell -> Bool -> Cell
     selects Nothing True = Just (dataInt, discr)
     selects cell    _    = cell
+{-# NOINLINE inputBuffer #-}
 
 -- ============================================
 -- = Simulated pipelined floating point adder =
@@ -112,6 +114,7 @@ fpAdder pipe (cell1, cell2) = (pipe', out)
             | otherwise   = Nothing
     pipe'                 = newHead +>> pipe
     out                   = last pipe
+{-# NOINLINE fpAdder #-}
 
 -- =========================
 -- = Partial Result Buffer =
@@ -139,6 +142,7 @@ resBuffer (Res {..}) (newDiscr, newDiscrVal, index, pipeCell, newCell) = ( Res {
     -- Value purged from the circuit
     redOut    | valid (cellMem !! newDiscrVal) = Just (value (cellMem !! newDiscrVal), indexMem !! newDiscrVal)
               | otherwise                      = Nothing
+{-# NOINLINE resBuffer #-}
 
 -- ================================================================
 -- = Controller guides correct inputs to the floating point adder =
@@ -153,7 +157,7 @@ controller (inp1, inp2, pipe, fromResMem) = (arg1, arg2, shift, toResMem)
       | equalDiscr inp1 inp2       = (inp1   , inp2      , 2, pipe)
       | valid inp1                 = (inp1   , Nothing   , 1, pipe)
       | otherwise                  = (Nothing, Nothing   , 0, pipe)
-
+{-# NOINLINE controller #-}
 
 -- =============================================
 -- = Reducer: Wrap up all the above components =
